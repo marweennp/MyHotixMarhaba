@@ -60,6 +60,39 @@
                 android:theme="@style/MyEditTextStyle" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
+
+        <RadioGroup
+            android:id="@+id/rg_is_resa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:checkedButton="@id/rb_settings_default_local_url"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/rb_resa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:text="@string/hint_resa"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/rb_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:text="@string/hint_room"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+
+
+        </RadioGroup>
+
         <!-- Search Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_search"

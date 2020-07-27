@@ -30,6 +30,8 @@
     <string name="hint_api_version">API Version</string>
     <string name="text_hotel_code">"Code Hotel "</string>
     <string name="hint_code">"Code"</string>
+    <string name="hint_resa">Reservation</string>
+    <string name="hint_room">Chambre</string>
     <string name="text_picture">"Photo"</string>
     <string name="hide">"Cacher"</string>
     <string name="show">"Afficher"</string>
@@ -102,6 +104,7 @@
     <string name="error_message_no_internet">"Pas de connexion Internet!"</string>
     <string name="error_message_unreachable_server">"Le serveur est inaccessible!"</string>
     <string name="error_message_empty_reservation">"Aucun invité trouvé dans cette réservation "</string>
+    <string name="error_message_empty_room">Aucun invité trouvé dans cette Chambre </string>
     <!-- Menu Items  -->
     <string name="menu_item_save">"Enregistrer "</string>
     <string name="menu_item_sync">"Sync"</string>

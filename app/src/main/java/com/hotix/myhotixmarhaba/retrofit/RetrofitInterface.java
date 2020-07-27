@@ -22,19 +22,24 @@ public interface RetrofitInterface {
      ** GET *********************************************************************************************
      **/
 
-    //Is Connected service call
-    @GET
-    Call<ResponseBody> isConnectedQuery(@Url String URL);
-
     //Get Infos service call
     @GET("/HotixSupportNew/API/Myhotix/GetInfos?")
     Call<HotelSettings> getHotelInfosQuery(@Query("codehotel") String codehotel,
                                            @Query("applicationId") String applicationId);
 
+    //Is Connected service call
+    @GET
+    Call<ResponseBody> isConnectedQuery(@Url String URL);
+
     //Get Pax Resa service call
     @GET
     Call<ArrayList<Pax>> getPaxResaQuery(@Url String URL,
                                          @Query("resaId") String resaId);
+
+    //Get Pax Room service call
+    @GET
+    Call<ArrayList<Pax>> getPaxRoomQuery(@Url String URL,
+                                         @Query("room") String room);
 
     //Get All Data service call
     @GET

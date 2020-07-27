@@ -8,18 +8,21 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hotix.myhotixmarhaba.R;
 import com.hotix.myhotixmarhaba.helpers.InputValidation;
+import com.hotix.myhotixmarhaba.helpers.MySession;
 import com.hotix.myhotixmarhaba.helpers.MySettings;
 import com.hotix.myhotixmarhaba.models.HotelSettings;
 import com.hotix.myhotixmarhaba.models.Pax;
@@ -49,8 +52,8 @@ import static com.hotix.myhotixmarhaba.helpers.Utils.stringEmptyOrNull;
 
 public class HomeActivity extends AppCompatActivity {
 
-    //MySettings
     private MySettings mMySettings;
+    private MySession mMySession;
 
     private KenBurnsView mKenBurns;
     private InputValidation mInputValidation;
@@ -64,6 +67,9 @@ public class HomeActivity extends AppCompatActivity {
     private AppCompatImageButton btnSetting;
     private AppCompatImageButton btnParams;
 
+    private AppCompatRadioButton rbResa;
+    private AppCompatRadioButton rbRoom;
+
     private TextInputLayout ilHotelCode;
     private TextInputEditText etHotelCode;
 
@@ -74,8 +80,8 @@ public class HomeActivity extends AppCompatActivity {
 
         bindViews();
 
-        //settings
         mMySettings = new MySettings(getApplicationContext());
+        mMySession = new MySession(getApplicationContext());
         mInputValidation = new InputValidation(this);
 
         init();
@@ -111,6 +117,9 @@ public class HomeActivity extends AppCompatActivity {
         btnSetting = (AppCompatImageButton) findViewById(R.id.ibtn_home_setting);
         btnParams = (AppCompatImageButton) findViewById(R.id.ibtn_home_prams);
 
+        rbResa = (AppCompatRadioButton) findViewById(R.id.rb_resa);
+        rbRoom = (AppCompatRadioButton) findViewById(R.id.rb_room);
+
         mKenBurns = (KenBurnsView) findViewById(R.id.ken_burns_images);
         mKenBurns.setImageResource(R.drawable.hotel);
     }
@@ -138,13 +147,41 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        rbResa.setChecked(mMySession.getIsResa());
+        rbRoom.setChecked(!mMySession.getIsResa());
+        ilResaNum.setHint(getResources().getString(mMySession.getIsResa()?  R.string.hint_resa_id: R.string.hint_room));
+
+        rbResa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (bChecked) {
+                    mMySession.setISResa(bChecked);
+                    ilResaNum.setHint(getResources().getString(R.string.hint_resa_id));
+                }
+            }
+        });
+
+        rbRoom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (bChecked) {
+                    mMySession.setISResa(!bChecked);
+                    ilResaNum.setHint(getResources().getString(R.string.hint_room));
+                }
+            }
+        });
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkNetwork(getApplicationContext())) {
                     if (inputTextValidation()) {
                         try {
-                            loadResaPax();
+                            if (mMySession.getIsResa()) {
+                                loadResaPax();
+                            }else{
+                                loadRoomPax();
+                            }
                         } catch (Exception e) {
                             showSnackbar(findViewById(android.R.id.content), getString(R.string.error_message_check_settings));
                         }
@@ -394,7 +431,7 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    //**********************************(  load Resa Pax  )*************************************
+    /*************************************(  load Resa Pax  )****************************************/
     public void loadResaPax() {
 
         pbSearch.setVisibility(View.VISIBLE);
@@ -437,7 +474,50 @@ public class HomeActivity extends AppCompatActivity {
         });
 
     }
-    //**********************************(  Loading Start Data  )*************************************
+
+    public void loadRoomPax() {
+
+        pbSearch.setVisibility(View.VISIBLE);
+        String room = etResaNum.getText().toString();
+        String URL = "/HNGAPI/" + API_VERSION + "/api/Myhotixguest/GetPaxRoom?";
+
+        RetrofitInterface service = RetrofitClient.getClientHngApi().create(RetrofitInterface.class);
+        Call<ArrayList<Pax>> userCall = service.getPaxRoomQuery(URL, room);
+        userCall.enqueue(new Callback<ArrayList<Pax>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Pax>> call, Response<ArrayList<Pax>> response) {
+
+                pbSearch.setVisibility(View.GONE);
+
+                if (response.raw().code() == 200) {
+                    GLOBAL_PAX_LIST = response.body();
+                    if (GLOBAL_PAX_LIST.size() > 0) {
+                        try {
+                            loadingStartData();
+                        } catch (Exception e) {
+                            showSnackbar(findViewById(android.R.id.content), getString(R.string.error_message_check_settings));
+                            btnSearch.setEnabled(true);
+                        }
+                    } else {
+                        showSnackbar(findViewById(android.R.id.content), getString(R.string.error_message_empty_room));
+                        btnSearch.setEnabled(true);
+                    }
+                } else {
+                    showSnackbar(findViewById(android.R.id.content), response.message());
+                    btnSearch.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Pax>> call, Throwable t) {
+                pbSearch.setVisibility(View.GONE);
+                showSnackbar(findViewById(android.R.id.content), getString(R.string.error_message_server_down));
+                btnSearch.setEnabled(true);
+            }
+        });
+
+    }
+    /**********************************(  Loading Start Data  )*************************************/
     public void loadingStartData() {
 
         String URL = "/HNGAPI/" + API_VERSION + "/api/myhotixguest/getalldata";
