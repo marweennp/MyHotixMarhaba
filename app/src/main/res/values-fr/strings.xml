@@ -16,7 +16,7 @@
     <string name="splash_screen_header">MyHotix Marhaba</string>
     <string name="splash_screen_footer">"MyHotix Marhaba"</string>
     <!-- Home Activity -->
-    <string name="hint_resa_id">"ID de Réservation"</string>
+    <string name="hint_resa_id">"Réservation"</string>
     <string name="text_search_button">"chercher"</string>
     <string name="text_vertion">"Version"</string>
     <!-- Settings Activity -->

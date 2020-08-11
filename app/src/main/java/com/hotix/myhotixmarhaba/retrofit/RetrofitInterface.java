@@ -23,7 +23,7 @@ public interface RetrofitInterface {
      **/
 
     //Get Infos service call
-    @GET("/HotixSupportNew/API/Myhotix/GetInfos?")
+    @GET("/HotixSupport/API/Myhotix/GetHotelInfos?")
     Call<HotelSettings> getHotelInfosQuery(@Query("codehotel") String codehotel,
                                            @Query("applicationId") String applicationId);
 
@@ -48,7 +48,6 @@ public interface RetrofitInterface {
     /***
      ** POST ********************************************************************************************
      **/
-
 
 //Post UpdateReservationInfos service call
     @FormUrlEncoded
